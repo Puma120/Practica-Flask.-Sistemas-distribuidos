@@ -23,10 +23,36 @@ def login_requerido(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# Ruta principal
+# Ruta principal - Crear producto (index.html)
 @app.route('/')
+@login_requerido
 def index():
-    return redirect(url_for('login'))
+    return render_template('index.html')
+
+@app.route('/nuevo', methods=['POST'])
+@login_requerido
+def nuevo_producto():
+    nombre = request.form['nombre'].strip()
+    precio = request.form['precio']
+    stock = request.form['stock']
+    activo = 'activo' in request.form
+    
+    # Validaciones
+    if not nombre:
+        flash('El nombre es requerido', 'error')
+        return redirect(url_for('index'))
+    try:
+        precio = float(precio)
+        stock = int(stock)
+        if precio < 0 or stock < 0:
+            raise ValueError()
+    except:
+        flash('Precio y stock deben ser números no negativos', 'error')
+        return redirect(url_for('index'))
+    
+    agregar_producto(nombre, precio, stock, activo)
+    flash('Producto creado', 'success')
+    return redirect(url_for('index'))
 
 # Login
 @app.route('/login', methods=['GET', 'POST'])
@@ -37,7 +63,7 @@ def login():
         if usuario == USUARIO and password == PASSWORD:
             session['usuario'] = usuario
             flash('Bienvenido!', 'success')
-            return redirect(url_for('listar_productos'))
+            return redirect(url_for('index'))
         else:
             flash('Usuario o contraseña incorrectos', 'error')
     return render_template('login.html')
@@ -55,34 +81,6 @@ def logout():
 def listar_productos():
     productos = obtener_productos()
     return render_template('products.html', productos=productos)
-
-# CRUD - Crear producto
-@app.route('/productos/nuevo', methods=['GET', 'POST'])
-@login_requerido
-def crear_producto():
-    if request.method == 'POST':
-        nombre = request.form['nombre'].strip()
-        precio = request.form['precio']
-        stock = request.form['stock']
-        activo = 'activo' in request.form
-        
-        # Validaciones
-        if not nombre:
-            flash('El nombre es requerido', 'error')
-            return render_template('form.html', producto=None)
-        try:
-            precio = float(precio)
-            stock = int(stock)
-            if precio < 0 or stock < 0:
-                raise ValueError()
-        except:
-            flash('Precio y stock deben ser números no negativos', 'error')
-            return render_template('form.html', producto=None)
-        
-        agregar_producto(nombre, precio, stock, activo)
-        flash('Producto creado', 'success')
-        return redirect(url_for('listar_productos'))
-    return render_template('form.html', producto=None)
 
 # CRUD - Editar producto
 @app.route('/productos/<int:id>/editar', methods=['GET', 'POST'])
@@ -125,4 +123,10 @@ def eliminar_producto_route(id):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+        # Seed automático si no hay productos
+        if len(obtener_productos()) == 0:
+            from app_seeder import productos_ejemplo
+            for nombre, precio, stock, activo in productos_ejemplo:
+                agregar_producto(nombre, precio, stock, activo)
+            print("Seeder ejecutado: 10 productos agregados.")
     app.run(debug=True)

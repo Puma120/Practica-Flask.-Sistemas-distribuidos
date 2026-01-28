@@ -1,104 +1,92 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nuevo Producto</title>
   <style>
-    body{
-      margin:0;
-      font-family: Arial, Helvetica, sans-serif;
-      background:#f2f4f7;
-      height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .box{
-      background:white;
-      width:360px;
-      padding:25px;
-      border-radius:10px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-    }
-
-    h2{
-      margin-top:0;
-      text-align:center;
-      margin-bottom:20px;
-    }
-
-    label{
-      font-size:14px;
-      display:block;
-      margin-bottom:6px;
-      font-weight:bold;
-    }
-
-    input{
-      width:100%;
-      padding:10px;
-      margin-bottom:15px;
-      border:1px solid #ccc;
-      border-radius:6px;
-      box-sizing:border-box;
-    }
-
-    button{
-      width:100%;
-      padding:10px;
-      border:none;
-      border-radius:6px;
-      background:#2563eb;
-      color:white;
-      font-weight:bold;
-      cursor:pointer;
-    }
-
-    button:hover{
-      background:#1d4ed8;
-    }
-
-    .hint{
-      margin-top:15px;
-      font-size:13px;
-      color:#555;
-      text-align:center;
-    }
-
-    .error{
-      color:red;
-      font-size:13px;
-      margin-bottom:12px;
-      text-align:center;
-    }
+    *{box-sizing:border-box;}
+    body{margin:0;font-family:Arial,sans-serif;background:#f2f4f7;}
+    
+    /* Menu Hamburguesa */
+    .navbar{background:#2563eb;padding:15px 20px;display:flex;align-items:center;justify-content:space-between;}
+    .navbar h1{color:white;margin:0;font-size:20px;}
+    .hamburger{cursor:pointer;display:flex;flex-direction:column;gap:5px;}
+    .hamburger span{width:25px;height:3px;background:white;border-radius:2px;}
+    .menu{position:fixed;top:0;right:-250px;width:250px;height:100%;background:#1e3a8a;transition:right 0.3s;z-index:1000;padding-top:60px;}
+    .menu.active{right:0;}
+    .menu a{display:block;color:white;padding:15px 20px;text-decoration:none;border-bottom:1px solid #3b5998;}
+    .menu a:hover{background:#3b5998;}
+    .menu-close{position:absolute;top:15px;right:15px;color:white;font-size:24px;cursor:pointer;}
+    .overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999;}
+    .overlay.active{display:block;}
+    
+    .container{max-width:500px;margin:40px auto;padding:0 20px;}
+    .box{background:white;padding:25px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.1);}
+    h2{margin-top:0;text-align:center;margin-bottom:20px;}
+    label{font-size:14px;display:block;margin-bottom:6px;font-weight:bold;}
+    input[type="text"],input[type="number"]{width:100%;padding:10px;margin-bottom:15px;border:1px solid #ccc;border-radius:6px;}
+    .checkbox-group{display:flex;align-items:center;gap:10px;margin-bottom:15px;}
+    .checkbox-group input{width:auto;margin:0;}
+    button{width:100%;padding:12px;border:none;border-radius:6px;background:#2563eb;color:white;font-weight:bold;cursor:pointer;}
+    button:hover{background:#1d4ed8;}
+    .msg{padding:10px;border-radius:6px;margin-bottom:15px;text-align:center;}
+    .msg.success{background:#d1fae5;color:#065f46;}
+    .msg.error{background:#fee2e2;color:#991b1b;}
   </style>
 </head>
-
 <body>
-  <div class="box">
-    <h2>Iniciar sesión</h2>
+  <nav class="navbar">
+    <h1>Sistema Productos</h1>
+    <div class="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+  
+  <div class="overlay" onclick="toggleMenu()"></div>
+  <div class="menu">
+    <span class="menu-close" onclick="toggleMenu()">&times;</span>
+    <a href="{{ url_for('index') }}">➕ Nuevo Producto</a>
+    <a href="{{ url_for('listar_productos') }}">📦 Ver Productos</a>
+    <a href="{{ url_for('logout') }}">🚪 Cerrar Sesión</a>
+  </div>
 
-    {% for msg in get_flashed_messages() %}
-      <div class="error">{{ msg }}</div>
-    {% endfor %}
-
-    <form method="POST" action="/login">
-      <label>Usuario:</label>
-      <input type="text" name="usuario" required>
-
-      <label>Contraseña:</label>
-      <input type="password" name="password" required>
-
-      <button type="submit">Entrar</button>
-    </form>
-
-    <div class="hint">
-      Credenciales ficticias: <b>admin</b> / <b>1234</b>
+  <div class="container">
+    <div class="box">
+      <h2>➕ Agregar Producto</h2>
+      
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <div class="msg {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endwith %}
+      
+      <form method="POST" action="{{ url_for('nuevo_producto') }}">
+        <label>Nombre:</label>
+        <input type="text" name="nombre" required>
+        
+        <label>Precio:</label>
+        <input type="number" name="precio" step="0.01" min="0" required>
+        
+        <label>Stock:</label>
+        <input type="number" name="stock" min="0" required>
+        
+        <div class="checkbox-group">
+          <input type="checkbox" name="activo" id="activo" checked>
+          <label for="activo" style="margin:0">Activo</label>
+        </div>
+        
+        <button type="submit">Guardar Producto</button>
+      </form>
     </div>
   </div>
+
+  <script>
+    function toggleMenu(){
+      document.querySelector('.menu').classList.toggle('active');
+      document.querySelector('.overlay').classList.toggle('active');
+    }
+  </script>
 </body>
 </html>
 
