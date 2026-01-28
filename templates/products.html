@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Productos</title>
+
+  <style>
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:#f2f4f7;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      padding:30px 20px;
+    }
+
+    .box{
+      background:white;
+      width:100%;
+      max-width:900px;
+      padding:25px;
+      border-radius:10px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+
+    h2{
+      margin:0 0 15px 0;
+      text-align:center;
+    }
+
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:15px;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      text-decoration:none;
+      display:inline-block;
+      padding:8px 12px;
+      border-radius:6px;
+      font-weight:bold;
+      font-size:14px;
+      border:none;
+      cursor:pointer;
+    }
+
+    .btn-primary{
+      background:#2563eb;
+      color:white;
+    }
+    .btn-primary:hover{ background:#1d4ed8; }
+
+    .btn-gray{
+      background:#e5e7eb;
+      color:#111827;
+    }
+    .btn-gray:hover{ background:#d1d5db; }
+
+    .btn-danger{
+      background:#dc2626;
+      color:white;
+    }
+    .btn-danger:hover{ background:#b91c1c; }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+    }
+
+    th, td{
+      padding:10px;
+      border:1px solid #ddd;
+      font-size:14px;
+      text-align:left;
+    }
+
+    th{
+      background:#f7f7f7;
+    }
+
+    .msg{
+      text-align:center;
+      padding:10px;
+      border-radius:6px;
+      margin-bottom:12px;
+      font-size:14px;
+    }
+
+    .success{
+      background:#dcfce7;
+      color:#166534;
+    }
+
+    .error{
+      background:#fee2e2;
+      color:#991b1b;
+    }
+
+    .empty{
+      text-align:center;
+      padding:20px;
+      color:#555;
+    }
+
+    .inline{
+      display:flex;
+      gap:8px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <h2>Productos</h2>
+
+    <div class="top">
+      <a href="/productos/nuevo" class="btn btn-primary">+ Nuevo</a>
+      <a href="/logout" class="btn btn-gray">Cerrar sesión</a>
+    </div>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for cat, msg in messages %}
+          {% if cat == "success" %}
+            <div class="msg success">{{ msg }}</div>
+          {% else %}
+            <div class="msg error">{{ msg }}</div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% if productos and productos|length > 0 %}
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Activo</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for p in productos %}
+          <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.nombre }}</td>
+            <td>$ {{ "%.2f"|format(p.precio) }}</td>
+            <td>{{ p.stock }}</td>
+            <td>{{ "Sí" if p.activo else "No" }}</td>
+
+            <td>
+              <div class="inline">
+                <a href="/productos/{{ p.id }}/editar" class="btn btn-gray">Editar</a>
+
+                <form method="POST" action="/productos/{{ p.id }}/eliminar" style="margin:0;">
+                  <button type="submit" class="btn btn-danger"
+                    onclick="return confirm('¿Eliminar producto?');">
+                    Eliminar
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="empty">
+        No hay productos todavía.
+      </div>
+    {% endif %}
+
+  </div>
+</body>
+</html>
