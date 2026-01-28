@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# SQLite
+*.db
+
+# IDE
+.vscode/
+.idea/
+
+# Flask
+instance/
+.webassets-cache
+
+# Misc
+*.log
+.DS_Store
