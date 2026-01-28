@@ -46,14 +46,14 @@
   <div class="overlay" onclick="toggleMenu()"></div>
   <div class="menu">
     <span class="menu-close" onclick="toggleMenu()">&times;</span>
-    <a href="{{ url_for('index') }}">➕ Nuevo Producto</a>
-    <a href="{{ url_for('listar_productos') }}">📦 Ver Productos</a>
-    <a href="{{ url_for('logout') }}">🚪 Cerrar Sesión</a>
+    <a href="{{ url_for('nuevo_producto') }}">Nuevo Producto</a>
+    <a href="{{ url_for('listar_productos') }}">Ver Productos</a>
+    <a href="{{ url_for('logout') }}">Cerrar Sesion</a>
   </div>
 
   <div class="container">
     <div class="box">
-      <h2>➕ Agregar Producto</h2>
+      <h2>Agregar Producto</h2>
       
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% for category, message in messages %}

@@ -23,36 +23,39 @@ def login_requerido(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# Ruta principal - Crear producto (index.html)
+# Ruta principal - Redirige a productos
 @app.route('/')
 @login_requerido
 def index():
-    return render_template('index.html')
+    return redirect(url_for('listar_productos'))
 
-@app.route('/nuevo', methods=['POST'])
+# Crear producto (index.html)
+@app.route('/nuevo', methods=['GET', 'POST'])
 @login_requerido
 def nuevo_producto():
-    nombre = request.form['nombre'].strip()
-    precio = request.form['precio']
-    stock = request.form['stock']
-    activo = 'activo' in request.form
-    
-    # Validaciones
-    if not nombre:
-        flash('El nombre es requerido', 'error')
-        return redirect(url_for('index'))
-    try:
-        precio = float(precio)
-        stock = int(stock)
-        if precio < 0 or stock < 0:
-            raise ValueError()
-    except:
-        flash('Precio y stock deben ser números no negativos', 'error')
-        return redirect(url_for('index'))
-    
-    agregar_producto(nombre, precio, stock, activo)
-    flash('Producto creado', 'success')
-    return redirect(url_for('index'))
+    if request.method == 'POST':
+        nombre = request.form['nombre'].strip()
+        precio = request.form['precio']
+        stock = request.form['stock']
+        activo = 'activo' in request.form
+        
+        # Validaciones
+        if not nombre:
+            flash('El nombre es requerido', 'error')
+            return render_template('index.html')
+        try:
+            precio = float(precio)
+            stock = int(stock)
+            if precio < 0 or stock < 0:
+                raise ValueError()
+        except:
+            flash('Precio y stock deben ser números no negativos', 'error')
+            return render_template('index.html')
+        
+        agregar_producto(nombre, precio, stock, activo)
+        flash('Producto creado', 'success')
+        return redirect(url_for('listar_productos'))
+    return render_template('index.html')
 
 # Login
 @app.route('/login', methods=['GET', 'POST'])
@@ -63,7 +66,7 @@ def login():
         if usuario == USUARIO and password == PASSWORD:
             session['usuario'] = usuario
             flash('Bienvenido!', 'success')
-            return redirect(url_for('index'))
+            return redirect(url_for('listar_productos'))
         else:
             flash('Usuario o contraseña incorrectos', 'error')
     return render_template('login.html')
