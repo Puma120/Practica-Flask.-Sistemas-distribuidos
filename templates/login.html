@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+
+  <style>
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:#f2f4f7;
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .box{
+      background:white;
+      width:360px;
+      padding:25px;
+      border-radius:10px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+
+    h2{
+      margin-top:0;
+      text-align:center;
+      margin-bottom:20px;
+    }
+
+    label{
+      font-size:14px;
+      display:block;
+      margin-bottom:6px;
+      font-weight:bold;
+    }
+
+    input{
+      width:100%;
+      padding:10px;
+      margin-bottom:15px;
+      border:1px solid #ccc;
+      border-radius:6px;
+      box-sizing:border-box;
+    }
+
+    button{
+      width:100%;
+      padding:10px;
+      border:none;
+      border-radius:6px;
+      background:#2563eb;
+      color:white;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    button:hover{
+      background:#1d4ed8;
+    }
+
+    .hint{
+      margin-top:15px;
+      font-size:13px;
+      color:#555;
+      text-align:center;
+    }
+
+    .error{
+      color:red;
+      font-size:13px;
+      margin-bottom:12px;
+      text-align:center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <h2>Iniciar sesión</h2>
+
+    {% for msg in get_flashed_messages() %}
+      <div class="error">{{ msg }}</div>
+    {% endfor %}
+
+    <form method="POST" action="/login">
+      <label>Usuario:</label>
+      <input type="text" name="usuario" required>
+
+      <label>Contraseña:</label>
+      <input type="password" name="password" required>
+
+      <button type="submit">Entrar</button>
+    </form>
+
+    <div class="hint">
+      Credenciales ficticias: <b>admin</b> / <b>1234</b>
+    </div>
+  </div>
+</body>
+</html>
+
+
