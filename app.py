@@ -2,12 +2,10 @@
 # Practica Flask: CRUD Producto con login ficticio y SQLite
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from functools import wraps
-from db import db, obtener_productos, obtener_producto, agregar_producto, actualizar_producto, eliminar_producto
+from db import crear_tablas, obtener_producto, obtener_productos, agregar_producto, actualizar_producto, eliminar_producto
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'clave_secreta_123'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///productos.db'
-db.init_app(app)
 
 # Usuario ficticio
 USUARIO = 'admin'
@@ -38,6 +36,7 @@ def nuevo_producto():
         precio = request.form['precio']
         stock = request.form['stock']
         activo = 'activo' in request.form
+        categoria = request.form.get('categoria', 'General').strip()
         
         # Validaciones
         if not nombre:
@@ -52,7 +51,7 @@ def nuevo_producto():
             flash('Precio y stock deben ser números no negativos', 'error')
             return render_template('index.html')
         
-        agregar_producto(nombre, precio, stock, activo)
+        agregar_producto(nombre, precio, stock, activo, categoria)
         flash('Producto creado', 'success')
         return redirect(url_for('listar_productos'))
     return render_template('index.html')
@@ -95,6 +94,7 @@ def editar_producto(id):
         precio = request.form['precio']
         stock = request.form['stock']
         activo = 'activo' in request.form
+        categoria = request.form.get('categoria', 'General').strip()
         
         # Validaciones
         if not nombre:
@@ -109,7 +109,7 @@ def editar_producto(id):
             flash('Precio y stock deben ser números no negativos', 'error')
             return render_template('form.html', producto=producto)
         
-        actualizar_producto(id, nombre, precio, stock, activo)
+        actualizar_producto(id, nombre, precio, stock, activo, categoria)
         flash('Producto actualizado', 'success')
         return redirect(url_for('listar_productos'))
     return render_template('form.html', producto=producto)
@@ -124,12 +124,11 @@ def eliminar_producto_route(id):
 
 # Crear tablas e iniciar app
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-        # Seed automático si no hay productos
-        if len(obtener_productos()) == 0:
-            from app_seeder import productos_ejemplo
-            for nombre, precio, stock, activo in productos_ejemplo:
-                agregar_producto(nombre, precio, stock, activo)
-            print("Seeder ejecutado: 10 productos agregados.")
+    crear_tablas()
+    # Seed automatico si no hay productos
+    if len(obtener_productos()) == 0:
+        from app_seeder import productos_ejemplo
+        for nombre, precio, stock, activo, categoria in productos_ejemplo:
+            agregar_producto(nombre, precio, stock, activo, categoria)
+        print("Seeder ejecutado: 10 productos agregados.")
     app.run(debug=True)

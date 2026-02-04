@@ -87,6 +87,7 @@
             <tr>
               <th>ID</th>
               <th>Nombre</th>
+              <th>Categoria</th>
               <th>Precio</th>
               <th>Stock</th>
               <th>Activo</th>
@@ -98,6 +99,7 @@
             <tr>
               <td>{{ p.id }}</td>
               <td>{{ p.nombre }}</td>
+              <td>{{ p.categoria or 'General' }}</td>
               <td>$ {{ "%.2f"|format(p.precio) }}</td>
               <td>{{ p.stock }}</td>
               <td>{{ "Si" if p.activo else "No" }}</td>
