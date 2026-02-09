@@ -48,9 +48,9 @@
   <div class="overlay" onclick="toggleMenu()"></div>
   <div class="menu">
     <span class="menu-close" onclick="toggleMenu()">&times;</span>
-    <a href="{{ url_for('nuevo_producto') }}">Nuevo Producto</a>
-    <a href="{{ url_for('listar_productos') }}">Ver Productos</a>
-    <a href="{{ url_for('logout') }}">Cerrar Sesion</a>
+    <a href="{{ url_for('productos.nuevo_producto') }}">Nuevo Producto</a>
+    <a href="{{ url_for('productos.listar_productos') }}">Ver Productos</a>
+    <a href="{{ url_for('auth.logout') }}">Cerrar Sesion</a>
   </div>
 
   <div class="container">
@@ -84,7 +84,7 @@
         <button type="submit">Actualizar Producto</button>
       </form>
       
-      <a href="{{ url_for('listar_productos') }}" class="back">← Volver a productos</a>
+      <a href="{{ url_for('productos.listar_productos') }}" class="back">← Volver a productos</a>
     </div>
   </div>
 
