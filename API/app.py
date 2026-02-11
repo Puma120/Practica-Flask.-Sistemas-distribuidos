@@ -8,12 +8,23 @@ import os
 # Agregar el directorio raiz al path para importar las capas existentes
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from flask import Flask
+from flask import Flask, jsonify
 from repositories import ProductosRepository
 from API import api_productos_bp, api_auth_bp
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'clave_secreta_123'
+
+# Ruta de bienvenida
+@app.route('/')
+def bienvenida():
+    return jsonify({
+        'mensaje': 'Bienvenido a la API de Pablo Urbina Macip',
+        'endpoints': {
+            'auth': '/api/auth (login, logout, estado)',
+            'productos': '/api/productos (CRUD)'
+        }
+    }), 200
 
 # Registrar Blueprints de la API
 app.register_blueprint(api_productos_bp)
