@@ -76,6 +76,107 @@
 					}
 				},
 				{
+					"name": "Listar con paginacion",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://127.0.0.1:5050/api/productos?page=1&per_page=5",
+							"protocol": "http",
+							"host": ["127", "0", "0", "1"],
+							"port": "5050",
+							"path": ["api", "productos"],
+							"query": [
+								{"key": "page", "value": "1"},
+								{"key": "per_page", "value": "5"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Filtrar por nombre",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://127.0.0.1:5050/api/productos?nombre=laptop",
+							"protocol": "http",
+							"host": ["127", "0", "0", "1"],
+							"port": "5050",
+							"path": ["api", "productos"],
+							"query": [
+								{"key": "nombre", "value": "laptop"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Filtrar por categoria",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://127.0.0.1:5050/api/productos?categoria=accesorios",
+							"protocol": "http",
+							"host": ["127", "0", "0", "1"],
+							"port": "5050",
+							"path": ["api", "productos"],
+							"query": [
+								{"key": "categoria", "value": "accesorios"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Filtrar por rango de precio",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://127.0.0.1:5050/api/productos?precio_min=100&precio_max=1000",
+							"protocol": "http",
+							"host": ["127", "0", "0", "1"],
+							"port": "5050",
+							"path": ["api", "productos"],
+							"query": [
+								{"key": "precio_min", "value": "100"},
+								{"key": "precio_max", "value": "1000"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Filtrar solo activos",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://127.0.0.1:5050/api/productos?activo=true",
+							"protocol": "http",
+							"host": ["127", "0", "0", "1"],
+							"port": "5050",
+							"path": ["api", "productos"],
+							"query": [
+								{"key": "activo", "value": "true"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Filtros combinados con paginacion",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://127.0.0.1:5050/api/productos?categoria=accesorios&activo=true&page=1&per_page=5",
+							"protocol": "http",
+							"host": ["127", "0", "0", "1"],
+							"port": "5050",
+							"path": ["api", "productos"],
+							"query": [
+								{"key": "categoria", "value": "accesorios"},
+								{"key": "activo", "value": "true"},
+								{"key": "page", "value": "1"},
+								{"key": "per_page", "value": "5"}
+							]
+						}
+					}
+				},
+				{
 					"name": "Obtener por ID",
 					"request": {
 						"method": "GET",

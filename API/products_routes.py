@@ -28,13 +28,62 @@ def api_login_requerido(f):
     return decorated_function
 
 
-# GET /api/productos - Listar todos
+# GET /api/productos - Listar con filtros y paginacion
+# Filtros: nombre, categoria, precio_min, precio_max, activo
+# Paginacion: page (default 1), per_page (default 10)
 @api_productos_bp.route('', methods=['GET'])
 @api_login_requerido
 def listar():
     productos = ProductosService.listar()
     resultado = [producto_a_dict(p) for p in productos]
-    return jsonify({'mensaje': 'Lista de productos', 'total': len(resultado), 'productos': resultado}), 200
+
+    # Filtros
+    nombre = request.args.get('nombre', '').strip().lower()
+    categoria = request.args.get('categoria', '').strip().lower()
+    precio_min = request.args.get('precio_min', type=float)
+    precio_max = request.args.get('precio_max', type=float)
+    activo = request.args.get('activo')
+
+    if nombre:
+        resultado = [p for p in resultado if nombre in p['nombre'].lower()]
+    if categoria:
+        resultado = [p for p in resultado if categoria in p['categoria'].lower()]
+    if precio_min is not None:
+        resultado = [p for p in resultado if p['precio'] >= precio_min]
+    if precio_max is not None:
+        resultado = [p for p in resultado if p['precio'] <= precio_max]
+    if activo is not None:
+        activo_bool = activo.lower() in ('true', '1', 'si')
+        resultado = [p for p in resultado if p['activo'] == activo_bool]
+
+    total_filtrado = len(resultado)
+
+    # Paginacion
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    
+    if page < 1:
+        page = 1
+    if per_page < 1:
+        per_page = 10
+    if per_page > 100:
+        per_page = 100
+
+    inicio = (page - 1) * per_page
+    fin = inicio + per_page
+    productos_paginados = resultado[inicio:fin]
+    total_paginas = (total_filtrado + per_page - 1) // per_page if total_filtrado > 0 else 1
+
+    return jsonify({
+        'mensaje': 'Lista de productos',
+        'paginacion': {
+            'page': page,
+            'per_page': per_page,
+            'total': total_filtrado,
+            'total_paginas': total_paginas
+        },
+        'productos': productos_paginados
+    }), 200
 
 
 # GET /api/productos/<id> - Obtener uno
