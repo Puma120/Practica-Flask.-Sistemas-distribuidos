@@ -33,8 +33,10 @@ class ProductosRepository:
             INSERT INTO producto (nombre, precio, stock, activo, categoria)
             VALUES (?, ?, ?, ?, ?)
         ''', (nombre, precio, stock, int(activo), categoria))
+        nuevo_id = cursor.lastrowid
         conn.commit()
         conn.close()
+        return nuevo_id
     
     @staticmethod
     def actualizar(id, nombre, precio, stock, activo, categoria):

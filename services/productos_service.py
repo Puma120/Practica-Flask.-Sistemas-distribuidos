@@ -18,8 +18,8 @@ class ProductosService:
         if errores:
             return None, errores
         
-        ProductosRepository.insertar(nombre, float(precio), int(stock), activo, categoria)
-        return True, None
+        nuevo_id = ProductosRepository.insertar(nombre, float(precio), int(stock), activo, categoria)
+        return nuevo_id, None
     
     @staticmethod
     def actualizar(id, nombre, precio, stock, activo, categoria):
