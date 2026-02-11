@@ -100,7 +100,10 @@ def obtener(id):
 @api_productos_bp.route('', methods=['POST'])
 @api_login_requerido
 def crear():
-    datos = request.get_json()
+    try:
+        datos = request.get_json(force=True)
+    except:
+        return jsonify({'error': 'JSON mal formado. Verifica la sintaxis del JSON'}), 400
 
     if not datos:
         return jsonify({'error': 'Se requiere JSON con datos del producto'}), 400
@@ -128,7 +131,11 @@ def actualizar(id):
     if not producto:
         return jsonify({'error': 'Producto no encontrado'}), 404
 
-    datos = request.get_json()
+    try:
+        datos = request.get_json(force=True)
+    except:
+        return jsonify({'error': 'JSON mal formado. Verifica la sintaxis del JSON'}), 400
+
     if not datos:
         return jsonify({'error': 'Se requiere JSON con datos del producto'}), 400
 
